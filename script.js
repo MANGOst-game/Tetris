@@ -162,17 +162,6 @@ function spawnTetromino() {
   }
 }
 
-function reportScoreToBot(finalScore) {
-  fetch("http://localhost:5000/api/tetris-score", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      userId: "123456789012345678", // 본인 디스코드 ID 입력
-      score: finalScore
-    })
-  });
-}
-
 function startGame() {
   document.querySelector('.game-container').style.display = 'flex';
   document.getElementById('start-screen').style.display = 'none';
@@ -193,7 +182,7 @@ function endGame() {
   clearInterval(dropInterval);
   gameRunning = false;
   document.getElementById('game-over-screen').style.display = 'block';
-  reportScoreToBot(score);
+  sendScore(score);
 }
 
 document.addEventListener('keydown', (e) => {
