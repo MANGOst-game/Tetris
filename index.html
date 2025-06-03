@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>웹 테트리스</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>🎮 웹 테트리스</h1>
+
+  <div id="start-screen">
+    <button id="start-button">플레이</button>
+  </div>
+
+  <div class="game-container" style="display:none;">
+    <div id="tetris-grid"></div>
+    <div id="side-panel">
+      <p>점수: <span id="score">0</span></p>
+      <p>NEXT</p>
+      <div class="preview" id="next-preview"></div>
+      <p>저장</p>
+      <div class="preview" id="hold-preview"></div>
+    </div>
+  </div>
+
+  <div id="game-over-screen" style="display:none;">
+    <p>게임 오버!</p>
+    <button id="retry-button">다시하기</button>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
