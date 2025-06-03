@@ -162,6 +162,17 @@ function spawnTetromino() {
   }
 }
 
+function reportScoreToBot(finalScore) {
+  fetch("http://localhost:5000/api/tetris-score", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      userId: "123456789012345678", // 본인 디스코드 ID 입력
+      score: finalScore
+    })
+  });
+}
+
 function startGame() {
   document.querySelector('.game-container').style.display = 'flex';
   document.getElementById('start-screen').style.display = 'none';
@@ -182,6 +193,7 @@ function endGame() {
   clearInterval(dropInterval);
   gameRunning = false;
   document.getElementById('game-over-screen').style.display = 'block';
+  reportScoreToBot(score);
 }
 
 document.addEventListener('keydown', (e) => {
@@ -212,6 +224,40 @@ document.addEventListener('keydown', (e) => {
     holdCurrent();
   }
 });
+// 1. 로그인된 유저 정보 가져오기
+async function getDiscordUser() {
+  try {
+    const res = await fetch("http://localhost:5000/me", {
+      credentials: "include"  // ✅ 세션 쿠키 포함해서 보내야 함
+    });
+    if (!res.ok) throw new Error("Not logged in");
+    return await res.json();  // { id, username }
+  } catch (err) {
+    alert("로그인이 필요합니다!");
+    return null;
+  }
+}
+
+// 2. 점수 서버로 전송
+async function sendScore(score) {
+  const user = await getDiscordUser();
+  if (!user) return;
+
+  fetch("http://localhost:5000/api/tetris-score", {
+    method: "POST",
+    credentials: "include",  // 🔥 세션 공유 유지
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      score: score  // ID는 서버가 세션으로 처리함!
+    })
+  }).then(res => res.json())
+    .then(data => {
+      alert(`💰 ${user.username}님에게 ${score}점 → ${data.money}원 지급됨!`);
+    });
+}
+
 
 document.getElementById('start-button').onclick = startGame;
 document.getElementById('retry-button').onclick = startGame;
